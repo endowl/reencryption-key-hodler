@@ -2,26 +2,24 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct InitMsg {
-    pub count: i32,
-}
+pub struct InitMsg {}
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "lowercase")]
 pub enum HandleMsg {
-    Increment {},
-    Reset { count: i32 },
+    Set { reencryption_key: [u8; 32] },
+    Reset {},
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "lowercase")]
 pub enum QueryMsg {
     // GetCount returns the current count as a json-encoded number
-    GetCount {},
+    GetReencryptionKey {},
 }
 
 // We define a custom struct for each query response
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct CountResponse {
-    pub count: i32,
+pub struct ReencryptionKeyResponse {
+    pub reencryption_key: [u8; 32],
 }

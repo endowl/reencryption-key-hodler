@@ -154,7 +154,7 @@ mod tests {
         // only the original creator can reset the counter
         let auth_env = mock_env("creator", &coins(2, "token"));
         let set_msg = HandleMsg::Set {reencryption_key: [55;32]};
-        let set_res = handle(&mut deps, auth_env, set_msg).unwrap();
+        let _set_res = handle(&mut deps, auth_env, set_msg).unwrap();
 
         // should now be 55
         let res = query(&deps, QueryMsg::GetReencryptionKey {}).unwrap();
@@ -164,7 +164,7 @@ mod tests {
         // reset it now
         let auth_env = mock_env("creator", &coins(2, "token"));
         let reset_msg = HandleMsg::Reset {};
-        let reset_res = handle(&mut deps, auth_env, reset_msg).unwrap();
+        let _reset_res = handle(&mut deps, auth_env, reset_msg).unwrap();
 
         // should now be 0
         let res = query(&deps, QueryMsg::GetReencryptionKey {}).unwrap();

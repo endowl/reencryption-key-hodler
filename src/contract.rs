@@ -42,6 +42,9 @@ pub fn try_set_reencryption_key<S: Storage, A: Api, Q: Querier>(
     let sender_address_raw = deps.api.canonical_address(&env.message.sender)?;
 
     config(&mut deps.storage).update(|mut state| {
+        if sender_address_raw != state.owner {
+            return Err(StdError::Unauthorized { backtrace: None });
+        }
         state.reencryption_key = key;
         Ok(state)
     })?;
@@ -111,8 +114,17 @@ mod tests {
         let env = mock_env("creator", &coins(2, "token"));
         let _res = init(&mut deps, env, msg).unwrap();
 
-        // anyone can set
-        let env = mock_env("anyone", &coins(2, "token"));
+        // not anyone can reset
+        let unauth_env = mock_env("anyone", &coins(2, "token"));
+        let msg = HandleMsg::Set {reencryption_key: [66;32]};
+        let res = handle(&mut deps, unauth_env, msg);
+        match res {
+            Err(StdError::Unauthorized { .. }) => {}
+            _ => panic!("Must return unauthorized error"),
+        }
+
+        // only creator can set
+        let env = mock_env("creator", &coins(2, "token"));
         let msg = HandleMsg::Set {reencryption_key: [1;32]};
         let _res = handle(&mut deps, env, msg).unwrap();
 
